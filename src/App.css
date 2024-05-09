@@ -9,7 +9,7 @@
   color: red;
 }
 
-.blink {
+.selected {
   animation: blink 0.5s;
 }
 

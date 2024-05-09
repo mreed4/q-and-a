@@ -11,8 +11,11 @@ function App() {
     const allResponses = [...document.querySelectorAll(".response-list-item")];
 
     if (validKeys.includes(inputtedKey)) {
-      allResponses.forEach((response) => response.classList.remove("blink"));
-      selectedResponse.classList.add("blink");
+      allResponses.forEach((response) => response.classList.remove("selected", "red"));
+      selectedResponse.classList.add("selected");
+      setTimeout(() => {
+        selectedResponse.classList.add("red");
+      }, 400);
     } else {
       console.log("Invalid key");
     }
