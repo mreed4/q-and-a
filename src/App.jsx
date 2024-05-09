@@ -1,35 +1,52 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { questions } from "./data/questions";
+import "./App.css";
+import { useEffect, useState } from "react";
 
 function App() {
-  const [count, setCount] = useState(0)
+  const [validKeys, setValidKeys] = useState(["a", "b", "c", "d", "e"]);
+
+  function handleKeyUp(event) {
+    const inputtedKey = event.key;
+    const selectedKey = document.querySelector(`[accesskey=${inputtedKey}]`);
+    const allResponses = [...document.querySelectorAll(".response-list-item")];
+
+    if (validKeys.includes(inputtedKey)) {
+      allResponses.forEach((response) => response.classList.remove("red"));
+      selectedKey.classList.add("red");
+    } else {
+      console.log("Invalid key");
+    }
+  }
+
+  useEffect(() => {
+    document.body.addEventListener("keyup", handleKeyUp);
+
+    return () => {
+      document.body.removeEventListener("keyup", handleKeyUp);
+    };
+  }, []);
 
   return (
     <>
-      <div>
-        <a href="https://vitejs.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      {questions.map((question, i) => {
+        return (
+          <div key={i}>
+            <p>{question.question}</p>
+            <ul>
+              {Object.entries(question.answers).map((answer) => {
+                const [key, response] = answer;
+                return (
+                  <li key={key} className="response-list-item" accessKey={key}>
+                    <span className="key">{key}</span> <span className="response">{response}</span>
+                  </li>
+                );
+              })}
+            </ul>
+          </div>
+        );
+      })}
     </>
-  )
+  );
 }
 
-export default App
+export default App;
