@@ -7,12 +7,12 @@ function App() {
 
   function handleKeyUp(event) {
     const inputtedKey = event.key;
-    const selectedKey = document.querySelector(`[accesskey=${inputtedKey}]`);
+    const selectedResponse = document.querySelector(`[accesskey=${inputtedKey}]`);
     const allResponses = [...document.querySelectorAll(".response-list-item")];
 
     if (validKeys.includes(inputtedKey)) {
-      allResponses.forEach((response) => response.classList.remove("red"));
-      selectedKey.classList.add("red");
+      allResponses.forEach((response) => response.classList.remove("blink"));
+      selectedResponse.classList.add("blink");
     } else {
       console.log("Invalid key");
     }
