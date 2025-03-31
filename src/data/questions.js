@@ -9,6 +9,16 @@ const questions = [
       e: "Horrible",
     },
   },
+  {
+    question: "What is your favorite feature of this game?",
+    answers: {
+      a: "Storyline",
+      b: "Graphics",
+      c: "Gameplay",
+      d: "Multiplayer",
+      e: "Soundtrack",
+    },
+  },
 ];
 
 export { questions };
