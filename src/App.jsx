@@ -1,30 +1,89 @@
+/* eslint-disable react/prop-types */
+import { useAppContext } from "./context/AppContext";
 import { questions } from "./data/questions";
 import "./App.css";
-import { useEffect, useState } from "react";
 
 function App() {
-  const [validKeys] = useState(["a", "b", "c", "d", "e"]);
-  const [selectedKey, setSelectedKey] = useState(null);
-  const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [enableAnimations, setEnableAnimations] = useState(false);
-  const [enableAutoNext, setEnableAutoNext] = useState(false);
+  return (
+    <>
+      <Settings />
+      <StepTracker />
+      <QuestionForm />
+    </>
+  );
+}
 
-  function handleKeyUp(event) {
-    const inputtedKey = event.key;
-    if (!validKeys.includes(inputtedKey)) {
-      console.log("Invalid key");
-      return;
-    }
-    setSelectedKey(inputtedKey);
+function Settings() {
+  const { enableAnimations, setEnableAnimations, enableAutoNext, setEnableAutoNext } = useAppContext();
 
-    if (enableAutoNext) {
-      // Move to the next question after a short delay
-      setTimeout(() => {
-        setSelectedKey(null);
-        setCurrentQuestionIndex((prevIndex) => (prevIndex < questions.length - 1 ? prevIndex + 1 : prevIndex));
-      }, 400);
-    }
-  }
+  return (
+    <div className="settings">
+      <label className="toggle">
+        <input type="checkbox" checked={enableAnimations} onChange={() => setEnableAnimations((prev) => !prev)} />
+        <span className="slider"></span>
+        Enable Animations
+      </label>
+      <label className="toggle">
+        <input type="checkbox" checked={enableAutoNext} onChange={() => setEnableAutoNext((prev) => !prev)} />
+        <span className="slider"></span>
+        Enable Auto-Next
+      </label>
+    </div>
+  );
+}
+
+function StepTracker() {
+  const { currentQuestionIndex } = useAppContext();
+
+  return (
+    <div className="step-tracker">
+      Question {currentQuestionIndex + 1} of {questions.length}
+    </div>
+  );
+}
+
+function QuestionForm() {
+  const { currentQuestionIndex, selectedKey } = useAppContext();
+
+  return (
+    <form className="fade-in">
+      {questions.map((question, index) => (
+        <div key={index} className={index === currentQuestionIndex ? "question active" : "question hidden"}>
+          <p>{question.question}</p>
+          <ul>
+            {Object.entries(question.answers).map(([key, response]) => (
+              <ResponseListItem key={key} keyProp={key} response={response} isSelected={selectedKey === key} />
+            ))}
+          </ul>
+        </div>
+      ))}
+      <NextButton />
+    </form>
+  );
+}
+
+function ResponseListItem({ keyProp, response, isSelected }) {
+  const { enableAnimations } = useAppContext();
+
+  const animationClass = enableAnimations ? "blink" : "";
+  const responseClasses = isSelected ? `${animationClass} selected`.trim() : "";
+  return (
+    <li key={keyProp} className="response-list-item">
+      <kbd className="key">{keyProp}</kbd>
+      <span className={`response ${responseClasses}`.trim()}>{response}</span>
+    </li>
+  );
+}
+
+function NextButton() {
+  const { enableAutoNext, currentQuestionIndex, selectedKey, setSelectedKey, setCurrentQuestionIndex } = useAppContext();
+
+  const isDisabled = (() => {
+    const isAutoNextEnabled = enableAutoNext;
+    const isLastQuestion = currentQuestionIndex >= questions.length - 1;
+    const isKeySelected = !enableAutoNext && selectedKey === null;
+    return isAutoNextEnabled || isLastQuestion || isKeySelected;
+  })();
 
   function handleNextQuestion(event) {
     event.preventDefault();
@@ -32,56 +91,10 @@ function App() {
     setCurrentQuestionIndex((prevIndex) => (prevIndex < questions.length - 1 ? prevIndex + 1 : prevIndex));
   }
 
-  useEffect(() => {
-    document.body.addEventListener("keyup", handleKeyUp);
-    return () => document.body.removeEventListener("keyup", handleKeyUp);
-  }, [enableAutoNext]);
-
-  useEffect(() => {
-    const rootElement = document.getElementById("root");
-    if (enableAnimations) {
-      rootElement.classList.add("animations-enabled");
-      rootElement.classList.remove("animations-disabled");
-    } else {
-      rootElement.classList.add("animations-disabled");
-      rootElement.classList.remove("animations-enabled");
-    }
-  }, [enableAnimations]);
-
   return (
-    <>
-      <div className="settings">
-        <label className="toggle">
-          <input type="checkbox" checked={enableAnimations} onChange={() => setEnableAnimations((prev) => !prev)} />
-          <span className="slider"></span>
-          Enable Animations
-        </label>
-        <label className="toggle">
-          <input type="checkbox" checked={enableAutoNext} onChange={() => setEnableAutoNext((prev) => !prev)} />
-          <span className="slider"></span>
-          Enable Auto-Next
-        </label>
-      </div>
-      <div className="step-tracker">
-        Question {currentQuestionIndex + 1} of {questions.length}
-      </div>
-      <form onSubmit={handleNextQuestion}>
-        <p>{questions[currentQuestionIndex].question}</p>
-        <ul>
-          {Object.entries(questions[currentQuestionIndex].answers).map(([key, response]) => (
-            <li key={key} className={`response-list-item ${selectedKey === key ? (enableAnimations ? "selected red" : "selected") : ""}`}>
-              <span className="key">{key}</span> <span className="response">{response}</span>
-            </li>
-          ))}
-        </ul>
-        <button
-          type="submit"
-          className="next-button"
-          disabled={currentQuestionIndex >= questions.length - 1 || (!enableAutoNext && selectedKey === null)}>
-          Next
-        </button>
-      </form>
-    </>
+    <button type="button" className="next-button" disabled={isDisabled} onClick={handleNextQuestion}>
+      Next
+    </button>
   );
 }
 
