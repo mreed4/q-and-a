@@ -5,12 +5,20 @@
   /* text-align: center; */
 }
 
-.red {
-  /* color: red; */
+.animations-enabled .selected {
+  animation: blink 0.5s;
 }
 
-.selected {
-  animation: blink 0.5s;
+.animations-enabled .red {
+  color: red;
+}
+
+.animations-disabled .selected {
+  animation: none;
+}
+
+.animations-disabled .red {
+  color: inherit;
 }
 
 @keyframes blink {
@@ -61,6 +69,87 @@ ul li {
   font-size: 1.2rem;
   font-weight: bold;
   color: #555;
+}
+
+.settings {
+  margin-bottom: 1rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.settings label {
+  font-size: 1rem;
+  color: #555;
+  cursor: pointer;
+}
+
+.settings input {
+  margin-right: 0.5rem;
+}
+
+.next-button {
+  margin-top: 1rem;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #fff;
+  background-color: #007bff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.next-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.next-button:hover:not(:disabled) {
+  background-color: #0056b3;
+}
+
+.toggle {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 1rem;
+  color: #555;
+  cursor: pointer;
+  position: relative;
+}
+
+.toggle input {
+  display: none;
+}
+
+.slider {
+  width: 40px;
+  height: 20px;
+  background-color: #ccc;
+  border-radius: 20px;
+  position: relative;
+  transition: background-color 0.3s ease;
+}
+
+.slider::before {
+  content: "";
+  width: 16px;
+  height: 16px;
+  background-color: #fff;
+  border-radius: 50%;
+  position: absolute;
+  top: 2px;
+  left: 2px;
+  transition: transform 0.3s ease;
+}
+
+.toggle input:checked + .slider {
+  background-color: #007bff;
+}
+
+.toggle input:checked + .slider::before {
+  transform: translateX(20px);
 }
 
 @media (prefers-color-scheme: dark) {

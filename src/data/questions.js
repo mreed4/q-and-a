@@ -19,6 +19,16 @@ const questions = [
       e: "Soundtrack",
     },
   },
+  {
+    question: "How would you rate the difficulty level of this game?",
+    answers: {
+      a: "Too easy",
+      b: "Easy",
+      c: "Just right",
+      d: "Hard",
+      e: "Too hard",
+    },
+  },
 ];
 
 export { questions };
