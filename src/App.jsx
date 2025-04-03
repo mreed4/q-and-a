@@ -93,13 +93,19 @@ function Question({ question, index }) {
 }
 
 function ResponseListItem({ keyProp, response, isSelected }) {
-  const { enableAnimations } = useAppContext();
+  const { enableAnimations, handleResponseSelection } = useAppContext();
 
   const animationClass = enableAnimations ? "blink" : "";
   const responseClasses = isSelected ? `${animationClass} selected`.trim() : "";
+  const keyClasses = isSelected ? "key selected" : "key";
+
   return (
-    <li key={keyProp} className="response-list-item">
-      <kbd className="key">{keyProp}</kbd>
+    <li
+      key={keyProp}
+      className="response-list-item"
+      onClick={() => handleResponseSelection(keyProp)} // Handle click
+    >
+      <kbd className={keyClasses}>{keyProp}</kbd>
       <span className={`response ${responseClasses}`.trim()}>{response}</span>
     </li>
   );

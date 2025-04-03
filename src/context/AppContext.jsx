@@ -14,6 +14,10 @@ export function AppProvider({ children }) {
 
   function handleKeyUp(event) {
     const inputtedKey = event.key.toLowerCase(); // Ensure lowercase for consistency
+    handleResponseSelection(inputtedKey);
+  }
+
+  function handleResponseSelection(inputtedKey) {
     if (!validKeys.includes(inputtedKey)) {
       console.log("Invalid key");
       return;
@@ -23,7 +27,7 @@ export function AppProvider({ children }) {
     // Save the response
     setResponses((prevResponses) => ({
       ...prevResponses,
-      [currentQuestionIndex]: inputtedKey, // Save the selected key
+      [currentQuestionIndex]: inputtedKey,
     }));
 
     if (enableAutoNext) {
@@ -64,6 +68,7 @@ export function AppProvider({ children }) {
         setSelectedKey,
         responses, // Expose responses
         setResponses, // Expose setResponses if needed elsewhere
+        handleResponseSelection, // Expose handleResponseSelection
       }}>
       {children}
     </AppContext.Provider>
