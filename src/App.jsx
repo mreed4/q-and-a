@@ -1,7 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useAppContext } from "./context/AppContext";
 import { questions } from "./data/questions";
-import "./App.css";
 
 function App() {
   return (
@@ -35,11 +34,18 @@ function Settings() {
 
 // StepTracker component
 function StepTracker() {
-  const { currentQuestionIndex } = useAppContext();
+  const { currentQuestionIndex, enableAnimations } = useAppContext();
+
+  const progressPercentage = ((currentQuestionIndex / questions.length) * 100).toFixed(2);
 
   return (
     <div className="step-tracker">
-      {currentQuestionIndex === questions.length ? "Summary" : `Question ${currentQuestionIndex + 1} of ${questions.length}`}
+      <div className="step-tracker-text">
+        {currentQuestionIndex === questions.length ? "Summary" : `Question ${currentQuestionIndex + 1} of ${questions.length}`}
+      </div>
+      <div className="progress-bar-container">
+        <div className={`progress-bar ${enableAnimations ? "animate" : ""}`} style={{ width: `${progressPercentage}%` }}></div>
+      </div>
     </div>
   );
 }
