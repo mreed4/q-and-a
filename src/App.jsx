@@ -13,6 +13,7 @@ function App() {
   );
 }
 
+// Settings and related components
 function Settings() {
   const { enableAnimations, setEnableAnimations, enableAutoNext, setEnableAutoNext } = useAppContext();
 
@@ -32,33 +33,56 @@ function Settings() {
   );
 }
 
+// StepTracker component
 function StepTracker() {
   const { currentQuestionIndex } = useAppContext();
 
   return (
     <div className="step-tracker">
-      Question {currentQuestionIndex + 1} of {questions.length}
+      {currentQuestionIndex === questions.length ? "Summary" : `Question ${currentQuestionIndex + 1} of ${questions.length}`}
     </div>
   );
 }
 
+// QuestionForm and related components
 function QuestionForm() {
+  const { currentQuestionIndex } = useAppContext();
+
+  const isQuestion = currentQuestionIndex < questions.length;
+
+  return (
+    <form>
+      {isQuestion ? <QuestionView /> : <SummaryView />}
+      <div className="navigation-buttons">
+        <BackButton />
+        {isQuestion ? <NextButton /> : <SubmitButton />}
+      </div>
+    </form>
+  );
+}
+
+function QuestionView() {
+  return (
+    <>
+      {questions.map((question, index) => (
+        <Question key={index} question={question} index={index} />
+      ))}
+    </>
+  );
+}
+
+function Question({ question, index }) {
   const { currentQuestionIndex, selectedKey } = useAppContext();
 
   return (
-    <form className="fade-in">
-      {questions.map((question, index) => (
-        <div key={index} className={index === currentQuestionIndex ? "question active" : "question hidden"}>
-          <p>{question.question}</p>
-          <ul>
-            {Object.entries(question.answers).map(([key, response]) => (
-              <ResponseListItem key={key} keyProp={key} response={response} isSelected={selectedKey === key} />
-            ))}
-          </ul>
-        </div>
-      ))}
-      <NextButton />
-    </form>
+    <div className={`question ${index === currentQuestionIndex ? "active fade-in" : "hidden"}`}>
+      <p>{question.question}</p>
+      <ul>
+        {Object.entries(question.answers).map(([key, response]) => (
+          <ResponseListItem key={key} keyProp={key} response={response} isSelected={selectedKey === key} />
+        ))}
+      </ul>
+    </div>
   );
 }
 
@@ -75,25 +99,79 @@ function ResponseListItem({ keyProp, response, isSelected }) {
   );
 }
 
+// SummaryView and related components
+function SummaryView() {
+  return (
+    <div className="summary">
+      <p>Review your responses before submitting:</p>
+      <ol>
+        {questions.map((_, index) => (
+          <SummaryItem key={index} index={index} />
+        ))}
+      </ol>
+    </div>
+  );
+}
+
+function SummaryItem({ index }) {
+  const { responses } = useAppContext();
+  const question = questions[index];
+  const response = responses[index];
+
+  return (
+    <li>
+      <strong>{question.question}</strong>: {response ? `(${response}) ${question.answers[response]}` : "No response"}
+    </li>
+  );
+}
+
+// Navigation buttons
 function NextButton() {
   const { enableAutoNext, currentQuestionIndex, selectedKey, setSelectedKey, setCurrentQuestionIndex } = useAppContext();
 
   const isDisabled = (() => {
     const isAutoNextEnabled = enableAutoNext;
-    const isLastQuestion = currentQuestionIndex >= questions.length - 1;
+    const isSummary = currentQuestionIndex > questions.length; // Allow transition to summary
     const isKeySelected = !enableAutoNext && selectedKey === null;
-    return isAutoNextEnabled || isLastQuestion || isKeySelected;
+    return isAutoNextEnabled || isSummary || isKeySelected;
   })();
 
   function handleNextQuestion(event) {
     event.preventDefault();
     setSelectedKey(null);
-    setCurrentQuestionIndex((prevIndex) => (prevIndex < questions.length - 1 ? prevIndex + 1 : prevIndex));
+    setCurrentQuestionIndex((prevIndex) => (prevIndex < questions.length ? prevIndex + 1 : prevIndex));
   }
 
   return (
     <button type="button" className="next-button" disabled={isDisabled} onClick={handleNextQuestion}>
       Next
+    </button>
+  );
+}
+
+function BackButton() {
+  const { currentQuestionIndex, setCurrentQuestionIndex } = useAppContext();
+
+  function handlePreviousQuestion(event) {
+    event.preventDefault();
+    setCurrentQuestionIndex((prevIndex) => (prevIndex > 0 ? prevIndex - 1 : prevIndex));
+  }
+
+  return (
+    <button
+      type="button"
+      className="back-button"
+      style={{ visibility: currentQuestionIndex === 0 ? "hidden" : "visible" }}
+      onClick={handlePreviousQuestion}>
+      Back
+    </button>
+  );
+}
+
+function SubmitButton() {
+  return (
+    <button type="submit" className="submit-button">
+      Submit
     </button>
   );
 }

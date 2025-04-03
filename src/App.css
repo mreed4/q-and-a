@@ -99,7 +99,7 @@ kbd.key {
 }
 
 .next-button {
-  margin-top: 1rem;
+  /* margin-top: 1rem;
   padding: 0.5rem 1rem;
   font-size: 1rem;
   font-weight: bold;
@@ -108,7 +108,7 @@ kbd.key {
   border: none;
   border-radius: 4px;
   cursor: pointer;
-  transition: background-color 0.3s ease;
+  transition: background-color 0.3s ease; */
 }
 
 .next-button:disabled {
@@ -117,7 +117,7 @@ kbd.key {
 }
 
 .next-button:hover:not(:disabled) {
-  background-color: #0056b3;
+  /* background-color: #0056b3; */
 }
 
 .toggle {
@@ -169,6 +169,33 @@ kbd.key {
 
 .question.active {
   display: block;
+}
+
+.navigation-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 1rem;
+}
+
+.back-button {
+  /* padding: 0.5rem 1rem;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #fff;
+  background-color: #6c757d;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: background-color 0.3s ease; */
+}
+
+.back-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+
+.back-button:hover:not(:disabled) {
+  /* background-color: #5a6268; */
 }
 
 @media (prefers-color-scheme: dark) {
