@@ -4,11 +4,11 @@ import { questions } from "./data/questions";
 
 function App() {
   return (
-    <>
+    <div className="qa-container">
       <Settings />
       <StepTracker />
       <QuestionForm />
-    </>
+    </div>
   );
 }
 

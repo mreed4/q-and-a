@@ -29,6 +29,16 @@ const questions = [
       e: "Too hard",
     },
   },
+  {
+    question: "How would you rate the replay value of this game?",
+    answers: {
+      a: "Excellent",
+      b: "Good",
+      c: "Average",
+      d: "Poor",
+      e: "None",
+    },
+  },
 ];
 
 export { questions };
