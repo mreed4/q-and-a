@@ -116,11 +116,20 @@ function SummaryView() {
   return (
     <div className="summary">
       <p>Review your responses before submitting:</p>
-      <ol>
-        {questions.map((_, index) => (
-          <SummaryItem key={index} index={index} />
-        ))}
-      </ol>
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Question</th>
+            <th>Your Response</th>
+          </tr>
+        </thead>
+        <tbody>
+          {questions.map((_, index) => (
+            <SummaryItem key={index} index={index} />
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }
@@ -131,9 +140,13 @@ function SummaryItem({ index }) {
   const response = responses[index];
 
   return (
-    <li>
-      <strong>{question.question}</strong>: {response ? `(${response}) ${question.answers[response]}` : "No response"}
-    </li>
+    <tr>
+      <td>{index + 1}</td>
+      <td>
+        <strong>{question.question}</strong>
+      </td>
+      <td>{response ? `${question.answers[response]}` : "No response"}</td>
+    </tr>
   );
 }
 

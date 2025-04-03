@@ -8,8 +8,8 @@ export function AppProvider({ children }) {
   const [validKeys] = useState(["a", "b", "c", "d", "e"]);
   const [selectedKey, setSelectedKey] = useState(null);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [enableAnimations, setEnableAnimations] = useState(Math.random() < 0.5);
-  const [enableAutoNext, setEnableAutoNext] = useState(Math.random() < 0.5);
+  const [enableAnimations, setEnableAnimations] = useState(true);
+  const [enableAutoNext, setEnableAutoNext] = useState(true);
   const [responses, setResponses] = useState({});
 
   function handleKeyUp(event) {
@@ -45,14 +45,8 @@ export function AppProvider({ children }) {
   }, [enableAutoNext, currentQuestionIndex]); // Add currentQuestionIndex to dependencies
 
   useEffect(() => {
-    const rootElement = document.getElementById("root");
-    if (enableAnimations) {
-      rootElement.classList.add("animations-enabled");
-      rootElement.classList.remove("animations-disabled");
-    } else {
-      rootElement.classList.add("animations-disabled");
-      rootElement.classList.remove("animations-enabled");
-    }
+    const className = enableAnimations ? "animations-enabled" : "animations-disabled";
+    document.documentElement.className = className; // Apply class to the root <html> element
   }, [enableAnimations]);
 
   return (
