@@ -24,10 +24,14 @@ export function AppProvider({ children }) {
     }
     setSelectedKey(inputtedKey);
 
-    // Save the response
+    // Save the response with quantifier
+    const selectedAnswer = questions[currentQuestionIndex].answers[inputtedKey];
     setResponses((prevResponses) => ({
       ...prevResponses,
-      [currentQuestionIndex]: inputtedKey,
+      [currentQuestionIndex]: {
+        key: inputtedKey,
+        quantifier: selectedAnswer.quantifier || null, // Use quantifier if available
+      },
     }));
 
     if (enableAutoNext) {

@@ -37,14 +37,14 @@ function StepTracker() {
   const { currentQuestionIndex, enableAnimations } = useAppContext();
 
   const progressPercentage = ((currentQuestionIndex / questions.length) * 100).toFixed(2);
+  const isSummary = currentQuestionIndex === questions.length;
+  const progressBarClass = `progress-bar ${enableAnimations ? "animate" : ""} ${isSummary ? "summary" : ""}`;
 
   return (
     <div className="step-tracker">
-      <div className="step-tracker-text">
-        {currentQuestionIndex === questions.length ? "Summary" : `Question ${currentQuestionIndex + 1} of ${questions.length}`}
-      </div>
+      <div className="step-tracker-text">{isSummary ? "Summary" : `Question ${currentQuestionIndex + 1} of ${questions.length}`}</div>
       <div className="progress-bar-container">
-        <div className={`progress-bar ${enableAnimations ? "animate" : ""}`} style={{ width: `${progressPercentage}%` }}></div>
+        <div className={progressBarClass} style={{ width: `${progressPercentage}%` }}></div>
       </div>
     </div>
   );
@@ -106,13 +106,21 @@ function ResponseListItem({ keyProp, response, isSelected }) {
       onClick={() => handleResponseSelection(keyProp)} // Handle click
     >
       <kbd className={keyClasses}>{keyProp}</kbd>
-      <span className={`response ${responseClasses}`.trim()}>{response}</span>
+      <span className={`response ${responseClasses}`.trim()}>{response.text}</span>
+      {response.quantifier ?? ""}
     </li>
   );
 }
 
 // SummaryView and related components
 function SummaryView() {
+  const { responses } = useAppContext();
+
+  // Calculate the total score
+  const totalScore = Object.values(responses).reduce((sum, response) => {
+    return sum + (response.quantifier ?? 0);
+  }, 0);
+
   return (
     <div className="summary">
       <p>Review your responses before submitting:</p>
@@ -122,6 +130,7 @@ function SummaryView() {
             <th>#</th>
             <th>Question</th>
             <th>Your Response</th>
+            <th>Score</th>
           </tr>
         </thead>
         <tbody>
@@ -130,6 +139,9 @@ function SummaryView() {
           ))}
         </tbody>
       </table>
+      <div className="final-score">
+        <strong>Final Score:</strong> {totalScore}
+      </div>
     </div>
   );
 }
@@ -145,7 +157,8 @@ function SummaryItem({ index }) {
       <td>
         <strong>{question.question}</strong>
       </td>
-      <td>{response ? `${question.answers[response]}` : "No response"}</td>
+      <td>{response ? question.answers[response.key].text : "No response"}</td>
+      <td>{response?.quantifier ?? "N/A"}</td>
     </tr>
   );
 }

@@ -39,17 +39,20 @@
   transition: background-color 0.3s ease, color 0.3s ease;
 }
 
-/* Elements */
+/* Reset and Base Styles */
+body {
+  margin: 0;
+  display: flex;
+  justify-content: center;
+  min-width: 320px;
+  min-height: 100vh;
+}
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
   padding: 2rem;
   user-select: none;
-}
-
-.qa-container {
-  margin-top: 2rem;
-  width: 600px;
 }
 
 a {
@@ -62,14 +65,33 @@ a:hover {
   color: var(--color-blue-hover);
 }
 
-body {
-  margin: 0;
-  display: flex;
-  justify-content: center;
-  min-width: 320px;
-  min-height: 100vh;
+/* Typography */
+h1 {
+  font-size: 3.2em;
+  line-height: 1.1;
 }
 
+kbd.key {
+  display: inline-block;
+  padding: 0.2rem 0.5rem;
+  margin-right: 0.5rem;
+  border: 2px solid var(--color-gray);
+  border-radius: 4px;
+  background-color: var(--color-light-gray);
+  color: var(--color-black);
+  font-family: monospace;
+  font-size: 0.9rem;
+  box-shadow: 0 2px 3px var(--color-light-shadow);
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+kbd.key.selected {
+  border-color: var(--color-blue);
+  color: var(--color-blue);
+}
+
+/* Buttons */
 button {
   border-radius: 8px;
   border: 1px solid transparent;
@@ -101,69 +123,15 @@ button:disabled:hover {
   border-color: transparent;
 }
 
-h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
-}
-
-kbd.key {
-  display: inline-block;
-  padding: 0.2rem 0.5rem;
-  margin-right: 0.5rem;
-  border: 1px solid var(--color-gray);
-  border-radius: 4px;
-  background-color: var(--color-light-gray);
-  color: var(--color-black);
-  font-family: monospace;
-  font-size: 0.9rem;
-  box-shadow: 0 2px 3px var(--color-light-shadow);
-  text-transform: uppercase;
-}
-kbd.key.selected {
-  border-color: var(--color-blue);
-}
-
-ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-ul li {
-  display: flex;
-  align-items: center;
-  margin-bottom: 0.5rem;
-}
-
-/* Classes */
-.settings {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  margin: 1rem;
-  display: flex;
-  gap: 1rem;
-}
-
-.animations-disabled .no-blink {
-  animation: none;
-}
-
-.animations-disabled .progress-bar {
-  transition: none;
-}
-
-.animations-enabled .blink {
-  animation: blink 0.5s;
-}
-
 .back-button:disabled {
   background-color: var(--color-light-gray);
   cursor: not-allowed;
 }
 
-.fade-in {
-  animation: fadeIn 0.5s ease-in-out;
+/* Containers and Layout */
+.qa-container {
+  margin-top: 2rem;
+  width: 600px;
 }
 
 .navigation-buttons {
@@ -172,49 +140,28 @@ ul li {
   margin-top: 1rem;
 }
 
-.progress-bar {
-  height: 100%;
-  background-color: var(--color-green);
-  transition: width 0.75s ease-in-out;
-}
-
-.progress-bar.animate {
-  transition: width 0.75s ease-in-out;
-}
-
 .progress-bar-container {
   width: 100%;
   height: 10px;
-  background-color: var(--color-light-green);
+  background-color: var(--color-gray); /* Darker background for light mode */
   border-radius: 5px;
   overflow: hidden;
 }
 
-.question.active {
-  display: block;
+.step-tracker {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  margin-bottom: 1rem;
 }
 
-.question.hidden {
-  display: none;
-}
-
-.response-list-item {
-  cursor: pointer;
-}
-
-.selected {
+.step-tracker-text {
+  margin-bottom: 0.5rem;
+  font-size: 1rem;
   font-weight: bold;
 }
 
-.settings input {
-  margin-right: 0.5rem;
-}
-
-.settings label {
-  font-size: 1rem;
-  cursor: pointer;
-}
-
+/* Components */
 .slider {
   width: 40px;
   height: 20px;
@@ -236,32 +183,6 @@ ul li {
   transition: transform 0.3s ease;
 }
 
-.step-tracker {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 1rem;
-}
-
-.step-tracker-text {
-  margin-bottom: 0.5rem;
-  font-size: 1rem;
-  font-weight: bold;
-}
-
-.summary table {
-  width: 100%;
-  border-collapse: collapse;
-  /* margin-top: 1rem; */
-}
-
-.summary table th,
-.summary table td {
-  padding: 0.5rem;
-  text-align: left;
-  border-bottom: 1px solid var(--color-gray);
-}
-
 .toggle {
   display: flex;
   align-items: center;
@@ -281,6 +202,101 @@ ul li {
 
 .toggle input:checked + .slider::before {
   transform: translateX(20px);
+}
+
+/* Animations */
+.animations-disabled .no-blink {
+  animation: none;
+}
+
+.animations-disabled .progress-bar {
+  transition: none;
+}
+
+.animations-enabled .blink {
+  animation: blink 0.5s;
+}
+
+.fade-in {
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+/* Progress Bar */
+.progress-bar {
+  height: 100%;
+  background-color: var(--color-gray); /* Default for light mode */
+  transition: width 0.75s ease-in-out, background-color 0.3s ease;
+}
+
+.progress-bar.animate {
+  transition: width 0.75s ease-in-out, background-color 0.3s ease;
+}
+
+.progress-bar.summary {
+  background-color: var(--color-green); /* Green when on summary */
+}
+
+/* Questions and Responses */
+.question.active {
+  display: block;
+}
+
+.question.hidden {
+  display: none;
+}
+
+.response-list-item {
+  cursor: pointer;
+}
+
+.selected {
+  font-weight: bold;
+}
+
+/* Lists */
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+ul li {
+  display: flex;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+
+/* Settings */
+.settings {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  margin: 1rem;
+  display: flex;
+  gap: 1rem;
+}
+
+.settings input {
+  margin-right: 0.5rem;
+}
+
+.settings label {
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+/* Summary */
+.summary table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.summary table th,
+.summary table td {
+  padding: 0.5rem 0.25rem;
+  text-align: left;
+  border-bottom: 1px solid var(--color-gray);
 }
 
 /* Keyframes */
@@ -314,7 +330,7 @@ ul li {
 /* Media Queries */
 @media (prefers-color-scheme: dark) {
   :root {
-    background-color: var(--color-dark-gray); /* Fix applied: Ensure dark background is used */
+    background-color: var(--color-dark-gray);
     color: var(--color-dark-text);
   }
 
@@ -325,6 +341,7 @@ ul li {
   button {
     background-color: var(--color-dark-gray-bg);
   }
+
   button:disabled {
     background-color: var(--color-dark-gray-bg);
   }
@@ -338,6 +355,10 @@ ul li {
 
   .progress-bar-container {
     background-color: var(--color-dark-gray-border);
+  }
+
+  .progress-bar {
+    background-color: var(--color-light-gray); /* Light color for dark mode */
   }
 
   .selected {
