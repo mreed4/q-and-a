@@ -60,7 +60,10 @@ function QuestionForm() {
     <form>
       {isQuestion ? <QuestionView /> : <SummaryView />}
       <div className="navigation-buttons">
-        <BackButton />
+        <div>
+          <BackButton />
+          <ResetButton /> {/* Reset button only visible after first question */}
+        </div>
         {isQuestion ? <NextButton /> : <SubmitButton />}
       </div>
     </form>
@@ -138,10 +141,15 @@ function SummaryView() {
             <SummaryItem key={index} index={index} />
           ))}
         </tbody>
+        <tfoot>
+          <tr>
+            <td colSpan="3">
+              <strong>Final Score:</strong>
+            </td>
+            <td>{totalScore}</td>
+          </tr>
+        </tfoot>
       </table>
-      <div className="final-score">
-        <strong>Final Score:</strong> {totalScore}
-      </div>
     </div>
   );
 }
@@ -158,7 +166,7 @@ function SummaryItem({ index }) {
         <strong>{question.question}</strong>
       </td>
       <td>{response ? question.answers[response.key].text : "No response"}</td>
-      <td>{response?.quantifier ?? "N/A"}</td>
+      <td>{response?.quantifier ?? <span className="no-response">N/a</span>}</td>
     </tr>
   );
 }
@@ -195,12 +203,12 @@ function BackButton() {
     setCurrentQuestionIndex((prevIndex) => (prevIndex > 0 ? prevIndex - 1 : prevIndex));
   }
 
+  if (currentQuestionIndex < 1) {
+    return null; // Hide the button for the first question
+  }
+
   return (
-    <button
-      type="button"
-      className="back-button"
-      style={{ visibility: currentQuestionIndex === 0 ? "hidden" : "visible" }}
-      onClick={handlePreviousQuestion}>
+    <button type="button" className="back-button" onClick={handlePreviousQuestion}>
       Back
     </button>
   );
@@ -210,6 +218,27 @@ function SubmitButton() {
   return (
     <button type="submit" className="submit-button">
       Submit
+    </button>
+  );
+}
+
+function ResetButton() {
+  const { currentQuestionIndex, setCurrentQuestionIndex, setSelectedKey, setResponses } = useAppContext();
+
+  function handleReset(event) {
+    event.preventDefault();
+    setCurrentQuestionIndex(0);
+    setSelectedKey(null);
+    setResponses({});
+  }
+
+  if (currentQuestionIndex < 1) {
+    return null; // Hide the button for the first question
+  }
+
+  return (
+    <button type="button" className="reset-button transparent-button" onClick={handleReset}>
+      Reset
     </button>
   );
 }
