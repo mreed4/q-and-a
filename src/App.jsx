@@ -1,8 +1,11 @@
 /* eslint-disable react/prop-types */
 import { useAppContext } from "./context/AppContext";
 import { questions } from "./data/questions";
+// import usePersistedResponses from "./hooks/usePersistedResponses"; // Uncomment if using the custom hook
 
 function App() {
+  // usePersistedResponses(); // Uncomment if using the custom hook
+
   return (
     <div className="qa-container">
       <Settings />
@@ -64,7 +67,10 @@ function QuestionForm() {
           <BackButton />
           <ResetButton /> {/* Reset button only visible after first question */}
         </div>
-        {isQuestion ? <NextButton /> : <SubmitButton />}
+        <div>
+          {isQuestion ? <NextButton /> : <SubmitButton />}
+          <SummaryButton /> {/* Summary button visible when all questions are answered */}
+        </div>
       </div>
     </form>
   );
@@ -110,19 +116,34 @@ function ResponseListItem({ keyProp, response, isSelected }) {
     >
       <kbd className={keyClasses}>{keyProp}</kbd>
       <span className={`response ${responseClasses}`.trim()}>{response.text}</span>
-      {response.quantifier ?? ""}
+      {/* <span className="quantifier">{response.quantifier ?? ""}</span> */}
     </li>
   );
 }
 
 // SummaryView and related components
+function calculateGrade(totalScore, maxScore) {
+  const percentage = (totalScore / maxScore) * 100;
+
+  if (percentage >= 90) return "A";
+  if (percentage >= 80) return "B";
+  if (percentage >= 70) return "C";
+  if (percentage >= 60) return "D";
+  return "F";
+}
+
 function SummaryView() {
   const { responses } = useAppContext();
 
-  // Calculate the total score
   const totalScore = Object.values(responses).reduce((sum, response) => {
     return sum + (response.quantifier ?? 0);
   }, 0);
+
+  const maxScore = questions.reduce((sum, question) => {
+    return sum + Math.max(...Object.values(question.answers).map((answer) => answer.quantifier ?? 0));
+  }, 0);
+
+  const grade = calculateGrade(totalScore, maxScore);
 
   return (
     <div className="summary">
@@ -146,7 +167,15 @@ function SummaryView() {
             <td colSpan="3">
               <strong>Final Score:</strong>
             </td>
-            <td>{totalScore}</td>
+            <td>
+              {totalScore} / {maxScore}
+            </td>
+          </tr>
+          <tr>
+            <td colSpan="3">
+              <strong>Grade:</strong>
+            </td>
+            <td>{grade}</td>
           </tr>
         </tfoot>
       </table>
@@ -155,18 +184,22 @@ function SummaryView() {
 }
 
 function SummaryItem({ index }) {
-  const { responses } = useAppContext();
+  const { responses, setCurrentQuestionIndex } = useAppContext();
   const question = questions[index];
   const response = responses[index];
 
+  function handleEditQuestion() {
+    setCurrentQuestionIndex(index); // Navigate to the selected question
+  }
+
   return (
-    <tr>
+    <tr onClick={handleEditQuestion} style={{ cursor: "pointer" }}>
       <td>{index + 1}</td>
       <td>
         <strong>{question.question}</strong>
       </td>
       <td>{response ? question.answers[response.key].text : "No response"}</td>
-      <td>{response?.quantifier ?? <span className="no-response">N/a</span>}</td>
+      <td>{response?.quantifier ?? <span className="no-response">&ndash;</span>}</td>
     </tr>
   );
 }
@@ -239,6 +272,27 @@ function ResetButton() {
   return (
     <button type="button" className="reset-button transparent-button" onClick={handleReset}>
       Reset
+    </button>
+  );
+}
+
+function SummaryButton() {
+  const { responses, setCurrentQuestionIndex, currentQuestionIndex } = useAppContext();
+
+  const allQuestionsAnswered = questions.every((_, index) => responses[index]);
+  const isSummary = currentQuestionIndex === questions.length;
+
+  function handleGoToSummary() {
+    setCurrentQuestionIndex(questions.length); // Navigate to summary
+  }
+
+  if (!allQuestionsAnswered || isSummary) {
+    return null; // Hide button if not all questions are answered or already on summary
+  }
+
+  return (
+    <button type="button" className="summary-button" onClick={handleGoToSummary}>
+      Summary
     </button>
   );
 }

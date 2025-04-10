@@ -22,11 +22,11 @@ const questions = [
   {
     question: "How would you rate the difficulty level of this game?",
     answers: {
-      a: { text: "Too easy", quantifier: 1 },
-      b: { text: "Easy", quantifier: 2 },
-      c: { text: "Just right", quantifier: 3 },
-      d: { text: "Hard", quantifier: 4 },
-      e: { text: "Too hard", quantifier: 5 },
+      a: { text: "Too easy" },
+      b: { text: "Easy" },
+      c: { text: "Just right" },
+      d: { text: "Hard" },
+      e: { text: "Too hard" },
     },
   },
   {
